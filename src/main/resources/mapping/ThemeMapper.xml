@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gotway.gotway.mapper.ThemeMapper">
+  <resultMap id="BaseResultMap" type="com.gotway.gotway.pojo.Theme">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="theme" jdbcType="VARCHAR" property="theme" />
+    <result column="describe_" jdbcType="VARCHAR" property="describe" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="tag" jdbcType="INTEGER" property="tag" />
+    <result column="comments" jdbcType="INTEGER" property="comments" />
+    <result column="report" jdbcType="INTEGER" property="report" />
+  </resultMap>
+  <resultMap id="ThemeVoResultMap" type="com.gotway.gotway.pojo.vo.ThemeVo" extends="BaseResultMap">
+    <result column="userName" jdbcType="VARCHAR" property="userName" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="stickNum" jdbcType="INTEGER" property="stickNum" />
+    <result column="imgs" jdbcType="INTEGER" property="imgs" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, user_id, theme, describe_, create_time, state, tag, comments, report
+  </sql>
+  <select id="selectByExample" parameterType="com.gotway.gotway.pojo.ThemeExample" resultMap="ThemeVoResultMap">
+    select t.* ,t1.nickname userName,t1.account account
+    ,(select GROUP_CONCAT(t2.pic_url separator ',') from t_file_log t2 WHERE t2.object_type=2 and t2.object_id=t.id) imgs
+    ,(select count(0) from t_stick t3 where t3.theme_id=t.id ) stickNum
+    from (
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_theme
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    ) t
+    left join t_user t1 on t1.id=t.user_id
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_theme
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_theme
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gotway.gotway.pojo.ThemeExample">
+    delete from t_theme
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gotway.gotway.pojo.Theme">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_theme (user_id, theme, describe_, 
+      create_time, state, tag, 
+      comments, report)
+    values (#{userId,jdbcType=INTEGER}, #{theme,jdbcType=VARCHAR}, #{describe,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{tag,jdbcType=INTEGER}, 
+      #{comments,jdbcType=INTEGER}, #{report,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gotway.gotway.pojo.Theme">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_theme
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="theme != null">
+        theme,
+      </if>
+      <if test="describe != null">
+        describe_,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="tag != null">
+        tag,
+      </if>
+      <if test="comments != null">
+        comments,
+      </if>
+      <if test="report != null">
+        report,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="theme != null">
+        #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null">
+        #{tag,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="report != null">
+        #{report,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gotway.gotway.pojo.ThemeExample" resultType="java.lang.Long">
+    select count(*) from t_theme
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_theme
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.theme != null">
+        theme = #{record.theme,jdbcType=VARCHAR},
+      </if>
+      <if test="record.describe != null">
+        describe_ = #{record.describe,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.tag != null">
+        tag = #{record.tag,jdbcType=INTEGER},
+      </if>
+      <if test="record.comments != null">
+        comments = #{record.comments,jdbcType=INTEGER},
+      </if>
+      <if test="record.report != null">
+        report = #{record.report,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_theme
+    set id = #{record.id,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      theme = #{record.theme,jdbcType=VARCHAR},
+      describe_ = #{record.describe,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      state = #{record.state,jdbcType=INTEGER},
+      tag = #{record.tag,jdbcType=INTEGER},
+      comments = #{record.comments,jdbcType=INTEGER},
+      report = #{record.report,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gotway.gotway.pojo.Theme">
+    update t_theme
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="theme != null">
+        theme = #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        describe_ = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null">
+        tag = #{tag,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        comments = #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="report != null">
+        report = #{report,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gotway.gotway.pojo.Theme">
+    update t_theme
+    set user_id = #{userId,jdbcType=INTEGER},
+      theme = #{theme,jdbcType=VARCHAR},
+      describe_ = #{describe,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      tag = #{tag,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=INTEGER},
+      report = #{report,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="checkThemeId" parameterType="int" resultType="int">
+    select count(*) from t_stick where theme_id=${value}
+
+  </select>
+  <select id="selectSelfAndUpOrDonwById" parameterType="map" resultMap="BaseResultMap">
+    (select * from t_theme where tag &lt;(select tag from t_theme where id =#{id}) order by tag desc limit 1)
+    union
+    select * from t_theme where id=#{id}
+    union
+    (select * from t_theme where tag&gt;(select tag from t_theme where id =#{id}) order by tag asc limit 1)
+  </select>
+  <select id="selectMaxTag" resultType="int">
+    select ifNUll(max(tag),1) from t_theme
+  </select>
+</mapper>

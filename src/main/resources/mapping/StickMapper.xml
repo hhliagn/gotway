@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gotway.gotway.mapper.StickMapper">
+  <resultMap id="BaseResultMap" type="com.gotway.gotway.pojo.Stick">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="theme_id" jdbcType="INTEGER" property="themeId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="comments" jdbcType="INTEGER" property="comments" />
+    <result column="admire" jdbcType="INTEGER" property="admire" />
+    <result column="report" jdbcType="INTEGER" property="report" />
+  </resultMap>
+  <resultMap id="StickVoResultMap" type="com.gotway.gotway.pojo.vo.StickVo" extends="BaseResultMap">
+    <result column="userName" jdbcType="VARCHAR" property="userName" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="imgs" jdbcType="VARCHAR" property="imgs" />
+    <result column="isReport" jdbcType="VARCHAR" property="isReport" />
+    <result column="isFocus" jdbcType="VARCHAR" property="isFocus" />
+    <result column="isPraise" jdbcType="VARCHAR" property="isPraise" />
+    <association property="user" column="user_id" select="com.gotway.gotway.mapper.UserMapper.selectByPrimaryKey" />
+    <collection property="commentsLogs" column="id"  select="com.gotway.gotway.mapper.CommentsLogMapper.selectForStick" fetchType="eager" ></collection>
+  </resultMap>
+  <resultMap id="StickVoForPraiseResultMap" type="com.gotway.gotway.pojo.vo.StickVoForPraise" extends="BaseResultMap">
+    <result column="imgs" jdbcType="VARCHAR" property="imgs" />
+    <association property="user" column="user_id" select="com.gotway.gotway.mapper.UserMapper.selectByPrimaryKey"></association>
+    <collection property="praiseUsers" column="id"  select="com.gotway.gotway.mapper.PraiseLogMapper.selectForStick" fetchType="eager" ></collection>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, theme_id, user_id, title, content, create_time, state, comments, admire, report
+  </sql>
+  <select id="selectByExample" parameterType="com.gotway.gotway.pojo.StickExample" resultMap="StickVoResultMap">
+    select t.* ,t1.nickname userName,t1.account account,t1.*,
+    (select GROUP_CONCAT(t2.pic_url separator ',') from t_file_log t2 WHERE t2.object_type=1 and t2.object_id=t.id) imgs
+    from (
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_stick
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    ) t
+    left join t_user t1 on t1.id=t.user_id
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="StickVoResultMap">
+    select t.* ,t1.nickname userName,t1.account account,
+    (select GROUP_CONCAT(t2.pic_url separator ',') from t_file_log t2 WHERE t2.object_type=1 and t2.object_id=t.id) imgs
+    from (
+    select 
+    <include refid="Base_Column_List" />
+    from t_stick
+    where id = #{id,jdbcType=INTEGER}
+    ) t
+    left join t_user t1 on t1.id=t.user_id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_stick
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gotway.gotway.pojo.StickExample">
+    delete from t_stick
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gotway.gotway.pojo.Stick">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_stick (theme_id, user_id, title, 
+      content, create_time, state, 
+      comments, admire, report
+      )
+    values (#{themeId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, 
+      #{comments,jdbcType=INTEGER}, #{admire,jdbcType=INTEGER}, #{report,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.gotway.gotway.pojo.Stick">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_stick
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="themeId != null">
+        theme_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="comments != null">
+        comments,
+      </if>
+      <if test="admire != null">
+        admire,
+      </if>
+      <if test="report != null">
+        report,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="themeId != null">
+        #{themeId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="admire != null">
+        #{admire,jdbcType=INTEGER},
+      </if>
+      <if test="report != null">
+        #{report,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gotway.gotway.pojo.StickExample" resultType="java.lang.Long">
+    select count(*) from t_stick
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_stick
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.themeId != null">
+        theme_id = #{record.themeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.comments != null">
+        comments = #{record.comments,jdbcType=INTEGER},
+      </if>
+      <if test="record.admire != null">
+        admire = #{record.admire,jdbcType=INTEGER},
+      </if>
+      <if test="record.report != null">
+        report = #{record.report,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_stick
+    set id = #{record.id,jdbcType=INTEGER},
+      theme_id = #{record.themeId,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      state = #{record.state,jdbcType=INTEGER},
+      comments = #{record.comments,jdbcType=INTEGER},
+      admire = #{record.admire,jdbcType=INTEGER},
+      report = #{record.report,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gotway.gotway.pojo.Stick">
+    update t_stick
+    <set>
+      <if test="themeId != null">
+        theme_id = #{themeId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        comments = #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="admire != null">
+        admire = #{admire,jdbcType=INTEGER},
+      </if>
+      <if test="report != null">
+        report = #{report,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gotway.gotway.pojo.Stick">
+    update t_stick
+    set theme_id = #{themeId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=INTEGER},
+      admire = #{admire,jdbcType=INTEGER},
+      report = #{report,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByExampleForPraise" parameterType="com.gotway.gotway.pojo.StickExample" resultMap="StickVoForPraiseResultMap">
+    select t.* ,t1.nickname userName,t1.account account,t1.*,
+    (select GROUP_CONCAT(t2.pic_url separator ',') from t_file_log t2 WHERE t2.object_type=1 and t2.object_id=t.id) imgs
+    from (
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_stick
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    ) t
+    left join t_user t1 on t1.id=t.user_id
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="getListForApp" parameterType="map" resultMap="StickVoResultMap">
+    select t.* ,t1.nickname userName,t1.account account,
+    <if test="userId != null">
+    case when t3.id is not null then 1 else 0 end
+    </if>
+    <if test="userId == null">
+      0
+    </if>
+    as isFocus,
+    <if test="userId != null">
+      case when t4.id is not null then 1 else 0 end
+    </if>
+    <if test="userId == null">
+      0
+    </if>
+    as isReport,
+    <if test="userId != null">
+      case when t5.id is not null then 1 else 0 end
+    </if>
+    <if test="userId == null">
+      0
+    </if>
+    as isPraise,
+    (select GROUP_CONCAT(t2.pic_url separator ',') from t_file_log t2 WHERE t2.object_type=1 and t2.object_id=t.id) imgs
+    from (
+    select * from t_stick
+    where state=1
+    <if test="content != null">
+     and ( content like #{content}
+     or user_id in( select id from t_user where nickname like #{content}) )
+    </if>
+    <if test="themeId != null">
+      and theme_id = #{themeId}
+    </if>
+    <if test="stickerUserId != null and stickerUserId!=''">
+      and user_id = #{stickerUserId}
+    </if>
+    ) t
+    left join t_user t1 on t1.id=t.user_id
+    <if test="userId != null">
+      left join t_focus_log t3 on t3.user_id=t.user_id and t3.audience_id=#{userId}
+      left join t_report_log t4 on t4.stick_id=t.id and t4.user_id=#{userId}
+      left join t_praise_log t5 on t5.stick_id=t.id and t5.user_id=#{userId} and t5.state=0
+    </if>
+    <if test="sort != null">
+      order by ${sort}
+    </if>
+
+  </select>
+</mapper>

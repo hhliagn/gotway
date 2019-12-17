@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gotway.gotway.mapper.TopMapper">
+  <resultMap id="BaseResultMap" type="com.gotway.gotway.pojo.Top">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mem_id" jdbcType="INTEGER" property="memId" />
+    <result column="sum_mileage" jdbcType="DOUBLE" property="sumMileage" />
+    <result column="today_mileage" jdbcType="DOUBLE" property="todayMileage" />
+    <result column="week_mileage" jdbcType="DOUBLE" property="weekMileage" />
+    <result column="month_mileage" jdbcType="DOUBLE" property="monthMileage" />
+    <result column="support_count" jdbcType="INTEGER" property="supportCount" />
+    <result column="topic_count" jdbcType="INTEGER" property="topicCount" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, mem_id, sum_mileage, today_mileage, week_mileage, month_mileage, support_count, 
+    topic_count, level, update_date
+  </sql>
+  <select id="selectByExample" parameterType="com.gotway.gotway.pojo.TopExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_top
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_top
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_top
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gotway.gotway.pojo.TopExample">
+    delete from t_top
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gotway.gotway.pojo.Top">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_top (mem_id, sum_mileage, today_mileage, 
+      week_mileage, month_mileage, support_count, 
+      topic_count, level, update_date
+      )
+    values (#{memId,jdbcType=INTEGER}, #{sumMileage,jdbcType=DOUBLE}, #{todayMileage,jdbcType=DOUBLE}, 
+      #{weekMileage,jdbcType=DOUBLE}, #{monthMileage,jdbcType=DOUBLE}, #{supportCount,jdbcType=INTEGER}, 
+      #{topicCount,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.gotway.gotway.pojo.Top">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_top
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="memId != null">
+        mem_id,
+      </if>
+      <if test="sumMileage != null">
+        sum_mileage,
+      </if>
+      <if test="todayMileage != null">
+        today_mileage,
+      </if>
+      <if test="weekMileage != null">
+        week_mileage,
+      </if>
+      <if test="monthMileage != null">
+        month_mileage,
+      </if>
+      <if test="supportCount != null">
+        support_count,
+      </if>
+      <if test="topicCount != null">
+        topic_count,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="memId != null">
+        #{memId,jdbcType=INTEGER},
+      </if>
+      <if test="sumMileage != null">
+        #{sumMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="todayMileage != null">
+        #{todayMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="weekMileage != null">
+        #{weekMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="monthMileage != null">
+        #{monthMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="supportCount != null">
+        #{supportCount,jdbcType=INTEGER},
+      </if>
+      <if test="topicCount != null">
+        #{topicCount,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gotway.gotway.pojo.TopExample" resultType="java.lang.Long">
+    select count(*) from t_top
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_top
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.memId != null">
+        mem_id = #{record.memId,jdbcType=INTEGER},
+      </if>
+      <if test="record.sumMileage != null">
+        sum_mileage = #{record.sumMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.todayMileage != null">
+        today_mileage = #{record.todayMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.weekMileage != null">
+        week_mileage = #{record.weekMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.monthMileage != null">
+        month_mileage = #{record.monthMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="record.supportCount != null">
+        support_count = #{record.supportCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.topicCount != null">
+        topic_count = #{record.topicCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.level != null">
+        level = #{record.level,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_top
+    set id = #{record.id,jdbcType=INTEGER},
+      mem_id = #{record.memId,jdbcType=INTEGER},
+      sum_mileage = #{record.sumMileage,jdbcType=DOUBLE},
+      today_mileage = #{record.todayMileage,jdbcType=DOUBLE},
+      week_mileage = #{record.weekMileage,jdbcType=DOUBLE},
+      month_mileage = #{record.monthMileage,jdbcType=DOUBLE},
+      support_count = #{record.supportCount,jdbcType=INTEGER},
+      topic_count = #{record.topicCount,jdbcType=INTEGER},
+      level = #{record.level,jdbcType=INTEGER},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gotway.gotway.pojo.Top">
+    update t_top
+    <set>
+      <if test="memId != null">
+        mem_id = #{memId,jdbcType=INTEGER},
+      </if>
+      <if test="sumMileage != null">
+        sum_mileage = #{sumMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="todayMileage != null">
+        today_mileage = #{todayMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="weekMileage != null">
+        week_mileage = #{weekMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="monthMileage != null">
+        month_mileage = #{monthMileage,jdbcType=DOUBLE},
+      </if>
+      <if test="supportCount != null">
+        support_count = #{supportCount,jdbcType=INTEGER},
+      </if>
+      <if test="topicCount != null">
+        topic_count = #{topicCount,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gotway.gotway.pojo.Top">
+    update t_top
+    set mem_id = #{memId,jdbcType=INTEGER},
+      sum_mileage = #{sumMileage,jdbcType=DOUBLE},
+      today_mileage = #{todayMileage,jdbcType=DOUBLE},
+      week_mileage = #{weekMileage,jdbcType=DOUBLE},
+      month_mileage = #{monthMileage,jdbcType=DOUBLE},
+      support_count = #{supportCount,jdbcType=INTEGER},
+      topic_count = #{topicCount,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <resultMap id="TopVoResultMap" type="com.gotway.gotway.pojo.vo.TopVo">
+    <result column="dataVal" jdbcType="DOUBLE" property="dataVal" />
+    <result column="ranking" jdbcType="INTEGER" property="ranking" />
+    <association property="user" select="com.gotway.gotway.mapper.UserMapper.selectByPrimaryKey" column="mem_id" fetchType="eager"></association>
+  </resultMap>
+
+  <select id="selectForTop" parameterType="map" resultMap="TopVoResultMap">
+   select  @r:=@r+1 as ranking ,t.mem_id,ifnull(
+    <if test="type=='week'">
+      t.week_mileage
+    </if>
+    <if test="type=='day'">
+      t.today_mileage
+    </if>
+    <if test="type=='month'">
+      t.month_mileage
+    </if>
+    <if test="type=='level'">
+      t.level
+    </if>
+    <if test="type=='praise'">
+      t.support_count
+    </if>
+    <if test="type=='stick'">
+      t.topic_count
+    </if>
+    <if test="type=='sum'">
+      t.sum_mileage
+    </if> ,0)
+    dataVal
+    from t_top t,(select @r:=0) b
+    ORDER BY
+    <if test="type=='week'">
+      t.week_mileage
+    </if>
+    <if test="type=='day'">
+      t.today_mileage
+    </if>
+    <if test="type=='month'">
+      t.month_mileage
+    </if>
+    <if test="type=='level'">
+      t.level
+    </if>
+    <if test="type=='praise'">
+      t.support_count
+    </if>
+    <if test="type=='stick'">
+      t.topic_count
+    </if>
+    <if test="type=='sum'">
+      t.sum_mileage
+    </if>
+    desc
+    limit 0,100
+  </select>
+  <select id="selectForSelf" parameterType="map" resultMap="TopVoResultMap">
+  select * from (
+    select  @r:=@r+1 as ranking ,t.mem_id,ifnull(
+    <if test="type=='week'">
+      t.week_mileage
+    </if>
+    <if test="type=='day'">
+      t.today_mileage
+    </if>
+    <if test="type=='month'">
+      t.month_mileage
+    </if>
+    <if test="type=='level'">
+      t.level
+    </if>
+    <if test="type=='praise'">
+      t.support_count
+    </if>
+    <if test="type=='stick'">
+      t.topic_count
+    </if>
+    <if test="type=='sum'">
+      t.sum_mileage
+    </if> ,0)
+    dataVal
+    from t_top t,(select @r:=0) b
+    ORDER BY
+    <if test="type=='week'">
+      t.week_mileage
+    </if>
+    <if test="type=='day'">
+      t.today_mileage
+    </if>
+    <if test="type=='month'">
+      t.month_mileage
+    </if>
+    <if test="type=='level'">
+      t.level
+    </if>
+    <if test="type=='praise'">
+      t.support_count
+    </if>
+    <if test="type=='stick'">
+      t.topic_count
+    </if>
+    <if test="type=='sum'">
+      t.sum_mileage
+    </if>
+    desc
+  ) tt
+  where tt.mem_id=#{userId}
+  </select>
+</mapper>

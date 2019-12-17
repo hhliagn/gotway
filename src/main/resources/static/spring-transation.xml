@@ -1,0 +1,54 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<!-- #############################配置事务####################################### -->
+	<!--配置事务管理器 -->
+	<bean id="transationManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!--用tx声明事务配置，通知 -->
+	<tx:advice id="advice" transaction-manager="transationManager">
+		<tx:attributes>
+			<!-- 查讯类 -->
+			<tx:method name="query*" read-only="true"/>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="find*" read-only="true"/>
+			<tx:method name="select*" read-only="true"/>
+			<tx:method name="is*" read-only="true"/>
+			<!--更新类 -->
+			<tx:method name="add*" read-only="false" rollback-for="java.lang.Throwable"/>
+			<tx:method name="update*" read-only="false" rollback-for="java.lang.Throwable"/>
+			<tx:method name="del*" read-only="false" rollback-for="java.lang.Throwable"/>
+			<tx:method name="up*" read-only="false" rollback-for="java.lang.Throwable"/>
+			<tx:method name="auth*" read-only="false" rollback-for="java.lang.Throwable"/>
+			<tx:method name="register*" read-only="false" rollback-for="java.lang.Throwable"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 用aop事务切面配置 -->
+	<aop:config proxy-target-class="false">
+		<!--切入点 -->
+		<aop:pointcut expression="execution(* com.gotway.gotway.service.impl.*.*(..))
+		&amp;&amp; !execution(* com.gotway.gotway.service.impl.TokenServiceImpl.*(..))
+		&amp;&amp; !execution(* com.gotway.gotway.service.impl.FieldServiceImpl.is_repeated(..))"
+			id="pointcut"></aop:pointcut>
+		<!-- 切面配置 -->
+		<aop:advisor advice-ref="advice" pointcut-ref="pointcut" order="1"></aop:advisor>
+	</aop:config>
+	</beans>

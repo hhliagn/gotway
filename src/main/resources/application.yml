@@ -1,0 +1,79 @@
+server: 
+   port: 7777
+   servlet-path: / 
+   jsp-servlet:  
+         init-parameters:  
+                   development: true
+
+#logging:
+#      level:
+#         com.gotway.gotway.mapper : info
+#         org:
+#            spring:
+#                springboot:
+#                    dao: info
+#            springframework: info
+#      config: classpath:static/logback-spring.xml
+
+spring:
+    mvc:
+        view:
+             prefix: /WEB-INF/jsp/
+             suffix: .jsp
+        static-path-pattern: /**
+    http: 
+        multipart: 
+             maxFileSize: 200Mb
+             maxRequestSize: 1000Mb
+    datasource:
+        name: gotway
+        url: jdbc:mysql://159.138.93.247:3306/gotway?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password: Gzbd2020
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+
+  #配置资源访问路径
+
+
+  #配置资源映射路径
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.gotway.gotway.pojo
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: false
+    supportMethodsArguments: true
+    params: count=countSql
+
+#自定义的配置参数
+api_version: /api/v1
+file_upload_dir: d:/gotway
+img_url: http://159.138.93.247:7777/gotway/
+
+web:
+  upload-path: d:/gotway
+
+logging:
+  level:
+    com.gotway.gotway:
+      debug

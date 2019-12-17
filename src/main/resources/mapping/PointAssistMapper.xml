@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gotway.gotway.mapper.PointAssistMapper">
+  <resultMap id="BaseResultMap" type="com.gotway.gotway.pojo.PointAssist">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="stick_id" jdbcType="INTEGER" property="stickId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="create_date" jdbcType="DATE" property="createDate" />
+    <result column="driving_record_id" jdbcType="INTEGER" property="drivingRecordId" />
+    <result column="mileage" jdbcType="DOUBLE" property="mileage" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, stick_id, user_id, num, create_date, driving_record_id, mileage
+  </sql>
+  <select id="selectByExample" parameterType="com.gotway.gotway.pojo.PointAssistExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_point_assist
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_point_assist
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_point_assist
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gotway.gotway.pojo.PointAssistExample">
+    delete from t_point_assist
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gotway.gotway.pojo.PointAssist">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_point_assist (stick_id, user_id, num, 
+      create_date, driving_record_id, mileage
+      )
+    values (#{stickId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{num,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=DATE}, #{drivingRecordId,jdbcType=INTEGER}, #{mileage,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.gotway.gotway.pojo.PointAssist">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_point_assist
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="stickId != null">
+        stick_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="drivingRecordId != null">
+        driving_record_id,
+      </if>
+      <if test="mileage != null">
+        mileage,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="stickId != null">
+        #{stickId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="drivingRecordId != null">
+        #{drivingRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="mileage != null">
+        #{mileage,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gotway.gotway.pojo.PointAssistExample" resultType="java.lang.Long">
+    select count(*) from t_point_assist
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_point_assist
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.stickId != null">
+        stick_id = #{record.stickId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.num != null">
+        num = #{record.num,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=DATE},
+      </if>
+      <if test="record.drivingRecordId != null">
+        driving_record_id = #{record.drivingRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="record.mileage != null">
+        mileage = #{record.mileage,jdbcType=DOUBLE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_point_assist
+    set id = #{record.id,jdbcType=INTEGER},
+      stick_id = #{record.stickId,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      num = #{record.num,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=DATE},
+      driving_record_id = #{record.drivingRecordId,jdbcType=INTEGER},
+      mileage = #{record.mileage,jdbcType=DOUBLE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gotway.gotway.pojo.PointAssist">
+    update t_point_assist
+    <set>
+      <if test="stickId != null">
+        stick_id = #{stickId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="drivingRecordId != null">
+        driving_record_id = #{drivingRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="mileage != null">
+        mileage = #{mileage,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gotway.gotway.pojo.PointAssist">
+    update t_point_assist
+    set stick_id = #{stickId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=DATE},
+      driving_record_id = #{drivingRecordId,jdbcType=INTEGER},
+      mileage = #{mileage,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>
